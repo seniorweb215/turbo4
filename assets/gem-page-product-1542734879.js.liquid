@@ -1,0 +1,60 @@
+{% comment %}
+	GEMPAGE BUILDER (https://apps.shopify.com/gempage)
+
+	You SHOULD NOT modify source code in this page because
+	It is automatically generated from GEMPAGE BUILDER
+	Try to edit page with the live editor.
+{% endcomment %}
+
+        jQuery(function() {
+            var $module = jQuery('#m-1542734893301').children('.module');
+            $module.gfV3Product();
+        }); 
+    
+        jQuery(function() {
+            var $module = jQuery('#m-1542734893301-0').children('.module');
+            var effect = $module.attr('data-effect');
+            $module.gfV3ProductImage({
+                'effect': effect
+            })
+        }); 
+    
+        jQuery(function() {
+            var $module = jQuery('#m-1542734893301-1').children('.module');
+        }); 
+    
+        jQuery(function() {
+            var $module = jQuery('#m-1542734893301-2').children('.module');
+            $module.gfV3ProductPrice();
+        }); 
+    
+        jQuery(function() {
+            var $module = jQuery('#m-1542735220766').children('.module');
+            var swatchText = $module.attr('data-swatch-text') != undefined ? $module.attr('data-swatch-text') : '1';
+            $module.gfV3ProductSwatches({
+                swatchText: swatchText,
+                onSwatchSelected: function(variant, $swatch) {}
+            });
+        }); 
+    
+        jQuery(function() {
+            var $module = jQuery('#m-1542735059769').children('.module');
+        }); 
+    
+        jQuery(function() {
+            var $module = jQuery('#m-1542734893248').children('.module');
+            var style = $module.attr('data-style');
+            var updatePrice = $module.attr('data-updateprice');
+
+            $module.gfV3ProductQuantity({
+                'style': style,
+                'updatePrice': updatePrice
+            });
+        }); 
+    
+        jQuery(function() {
+            var $module = jQuery('#m-1542734893301-3').children('.module');
+            $module.gfV3ProductCartButton({ onItemAdded: function() {}});
+        }); 
+    
+var gemFlag=!1;for(var i=0;i<pageLibs.length;i++){if(pageLibs[i].indexOf('gfv3product.js')!==-1){if(jQuery.gfV3Product==undefined){gemFlag=!0;break}}if(pageLibs[i].indexOf('gfv3restabs.js')!==-1){if(jQuery.gfV3ResTabs==undefined){gemFlag=!0;break}}if(pageLibs[i].indexOf('gfaccordion.js')!==-1){if(jQuery.gfAccordion==undefined){gemFlag=!0;break}}}if(gemFlag){var count=0;for(var i=0;i<pageLibs.length-1;i++){jQuery.getScript(pageLibs[i],function(){count++;if(count==pageLibs.length-1){jQuery.getScript(pageLibs[pageLibs.length-1],function(){})}})}}

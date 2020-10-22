@@ -1,0 +1,398 @@
+
+      <div id="hulkapps_custom_options_{{ product.id }}"></div>
+      <script>
+        var pid = {{ product.id }};
+        if(typeof(jQuery) == "undefined"){
+          window.jQuery || document.write('<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"><\/script>')
+        }else if(jQuery.fn.jquery == "3.2.1"){
+          $.getScript("https://productoption.hulkapps.com/bootstrap-tooltip.js", function(){
+            var store_id = "{{shop.permanent_domain}}";
+            $.ajax({
+                  type:"GET",
+                  url: "https://productoption.hulkapps.com/store/get_all_relationships",
+                  data : { pid : pid,store_id : store_id},
+                  crossDomain: true,
+                  success:function(data){
+                    $("#hulkapps_custom_options_{{ product.id }}").html(data);
+                    setTimeout(function(){ 
+                      $('[data-toggle="tooltip"]').tooltip();
+                      conditional_rules(pid);
+                      $('#hulkapps_options_' + pid).closest("form").find(':submit').addClass('hulkapps_submit_cart'); }, 500);
+                  }
+            }); 
+          });
+        }else{
+          $.getScript("//ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js", function(){
+            $.noConflict( true );
+            $.getScript("https://productoption.hulkapps.com/bootstrap-tooltip.js", function(){
+              var store_id = "{{shop.permanent_domain}}";
+              $.ajax({
+                    type:"GET",
+                    url: "https://productoption.hulkapps.com/store/get_all_relationships",
+                    data : { pid : pid,store_id : store_id},
+                    crossDomain: true,
+                    success:function(data){
+                      $("#hulkapps_custom_options_{{ product.id }}").html(data);
+                      setTimeout(function(){ 
+                        $('[data-toggle="tooltip"]').tooltip();
+                        conditional_rules(pid);
+                        $('#hulkapps_options_' + pid).closest("form").find(':submit').addClass('hulkapps_submit_cart'); }, 500);
+                    }
+              }); 
+            });
+          });
+        }
+        function conditional_rules(prod_id) {
+                pass=false;
+                    verify_all = Array();
+                    verify_any = Array();
+                    verified_condition = Array();
+                    pass_array = Array();
+                   $("#hulkapps_option_list_" + prod_id + " .condition_hide").removeClass("conditional");
+                    $("#hulkapps_option_list_" + prod_id + " .condition_show").addClass("conditional");
+                    $("#hulkapps_custom_options_" + prod_id + " #conditional_rules").children().each(function() {
+                        pass_array = Array();
+                        pass=false;
+                        $(this).children().each(function() {
+                          pass=false;
+                            var condition_rule = $(this).text();
+                            var field_value;
+                            if ($("#hulkapps_option_list_" + prod_id + " .option_type_id_" + $(this).attr("data-field-num")).hasClass("dd_multi_render") == true) {
+                                var aa = condition_rule; 
+                                if (aa.indexOf("!=") >= 0){pass=true;}
+                                var count = $("#hulkapps_option_list_" + prod_id + " .hulkapps_option_" + $(this).attr("data-field-num") + "_visible:visible :selected").length;
+                                var ct=1;
+                                var selected_array = Array();
+                                if($("#hulkapps_option_list_" + prod_id + " .hulkapps_option_" + $(this).attr("data-field-num") + "_visible:visible :selected").length > 0){
+                                  $("#hulkapps_option_list_" + prod_id + " .hulkapps_option_" + $(this).attr("data-field-num") + "_visible:visible :selected").each(function(){
+                                  var condition_rule=aa;  
+                                    field_value = $(this).data("conditional-value");
+                                    condition_rule = condition_rule.replace("**value11**", field_value);
+                                    if (condition_rule.indexOf("==") >= 0){
+                                        var condition_rule = condition_rule.split("==");
+                                        if (condition_rule[0] == condition_rule[1]) {
+                                            pass = true;
+                                        } else {
+                                            pass = false;
+                                        }
+                                    }
+                                    else{
+                                        var condition_rule = condition_rule.split("!=");
+                                        if (condition_rule[0] != condition_rule[1]) {
+                                            pass = true;
+                                        } else {
+                                            pass = false;
+                                        }
+                                    }
+                                  selected_array.push(pass);
+                                  if(ct==count && count>1){
+                                    
+                                    var result = selected_array.join(' || ');
+                                    result = eval(result);
+                                    pass_array.push(result);
+                                  }
+                                  else if(count==1){
+                                    pass_array.push(pass);
+                                  }
+                                  ct=ct+1;
+                                });
+                                }else{
+                                  pass_array.push(false);
+                                }
+                            }
+                            else if ($("#hulkapps_option_list_" + prod_id + " .option_type_id_" + $(this).attr("data-field-num")).hasClass("cb_render") == true) {
+                              var aa = condition_rule;
+                                if (aa.indexOf("!=") >= 0){pass=true;}
+                                var ctt=1;
+                                var checked_array = Array();
+                                var countt = $("#hulkapps_option_list_" + prod_id + " .hulkapps_option_" + $(this).attr("data-field-num") + "_visible:visible:checked").length;
+                                $("#hulkapps_option_list_" + prod_id + " .hulkapps_option_" + $(this).attr("data-field-num") + "_visible:visible:checked").each(function() {
+                                    var condition_rule=aa;
+                                    field_value = $(this).data("conditional-value");
+                                    condition_rule = condition_rule.replace("**value11**", field_value);
+                                    if (condition_rule.indexOf("==") >= 0){
+                                        var condition_rule = condition_rule.split("==");
+                                        if (condition_rule[0] == condition_rule[1]) {
+                                            pass = true;
+                                        } else {
+                                            pass = false;
+                                        }
+                                    }
+                                    else{
+                                        var condition_rule = condition_rule.split("!=");
+                                        if (condition_rule[0] != condition_rule[1]) {
+                                            pass = true;
+                                        } else {
+                                            pass = false;
+                                        }
+                                    } 
+                                    checked_array.push(pass);
+                                    if(ctt==countt && countt>1){
+                                      var result = checked_array.join(' || ');
+                                      result = eval(result);
+                                      pass_array.push(result);
+                                    }
+                                    else if(countt==1){
+                                        pass_array.push(pass);
+                                    }
+                                    ctt=ctt+1;
+                                });
+                            } 
+                            else {
+                              pass=false;
+                                if ($("#hulkapps_option_list_" + prod_id + " .option_type_id_" + $(this).attr("data-field-num")).hasClass("rb_render") == true) {
+                                    field_value = $("#hulkapps_option_list_" + prod_id + " .hulkapps_option_" + $(this).attr("data-field-num") + ":checked").data("conditional-value");
+                                }
+                                else if ($("#hulkapps_option_list_" + prod_id + " .option_type_id_" + $(this).attr("data-field-num")).hasClass("dd_render") == true) {
+                                    field_value = $("#hulkapps_option_list_" + prod_id + " #" + $(this).attr("data-field-num") + " option:selected").data("conditional-value");
+                                } 
+                                else if ($("#hulkapps_option_list_" + prod_id + " .option_type_id_" + $(this).attr("data-field-num")).hasClass("swatch_render") == true) {
+                                    field_value = $("#hulkapps_option_list_" + prod_id + " .hulkapps_option_" + $(this).attr("data-field-num")+ ".swatch_selected").data("conditional-value");
+                               } 
+                                else {
+                                    field_value = $("#hulkapps_option_list_" + prod_id + " #" + $(this).attr("data-field-num") + "").val();
+                                }
+                                condition_rule = condition_rule.replace("**value11**", field_value);
+                                if (condition_rule.indexOf("==") >= 0){
+                                        var condition_rule = condition_rule.split("==");
+                                        if (condition_rule[0] == condition_rule[1]) {
+                                            pass = true;
+                                        } else {
+                                            pass = false;
+                                        }
+                                    }
+                                    else{
+                                        var condition_rule = condition_rule.split("!=");
+                                        if (condition_rule[0] != condition_rule[1]) {
+                                            pass = true;
+                                        } else {
+                                            pass = false;
+                                        }
+                                    }
+                              pass_array.push(pass);
+                            }
+                        }); 
+                      
+                        var type_rule = $(this).attr("data-verify-all");
+                        var condition_id = $(this).attr("name");
+                        if(type_rule=="0"){
+                            var res = pass_array.join(' || ');
+                        }
+                        else{
+                          var res = pass_array.join(' && ');
+                        }
+                      res = eval(res);
+                     if(res){
+                          $("#hulkapps_option_list_" + prod_id + " ." + condition_id + "_show").removeClass("conditional");
+                          $("#hulkapps_option_list_" + prod_id + " ." + condition_id + "_hide").addClass("conditional");
+                           $("#hulkapps_option_list_" + prod_id + " ." + condition_id + "_hide.conditional").find('.hulkapps_option_child').each(function() {
+                             conditional_change($(this));
+                              });
+                       }
+                      else{
+                          $("#hulkapps_option_list_" + prod_id + " ." + condition_id + "_show.conditional").find('.hulkapps_option_child').each(function() {
+                              conditional_change($(this));
+                          });
+                      }
+                    });
+                calc_options_total(prod_id);
+                    border_bottom = $(".hulkapps_option:visible").css("border-bottom");
+                    $(".hulkapps_option:visible").css("border-bottom",border_bottom);
+                    $(".hulkapps_option:visible:last").css("border-bottom","none");
+                }
+        function conditional_change(obj){
+          if (obj.prop("type") == "select-one" || obj.prop("type") == "select-multiple") {
+            if (obj.val() != ''){
+              obj.val('').change();
+            }
+          }
+          else if (obj.prop("type") == "radio") {
+            if (obj.prop("checked")){
+              obj.prop("checked", false);
+              obj.val('');
+              obj.parent().find('.radio_selected').removeClass("radio_selected");
+            }
+          }
+          else if (obj.prop("type") == "textarea" || obj.prop("type") == "text" || obj.prop("type") == "hidden" || obj.prop("type") == "file"){
+            if (obj.val()){
+              obj.val('').change();
+            }
+          }
+          else if (obj.prop("type") == "checkbox") {
+            if (obj.prop("checked")){
+              obj.prop("checked", false);
+            }
+          }
+          else if (obj.prop("tagName") == "DIV") {
+            if (obj.find('.swatch_radio').prop("checked")){
+              obj.find('.swatch_radio').prop("checked", false);
+              obj.removeClass("swatch_selected");
+            }
+          }
+        }
+        
+        function calc_options_total(product_id) {
+          var i;
+          var total = 0;
+          var format ={{ shop.money_format | json }};
+          
+          checked_variant = $("#hulkapps_option_list_" + product_id + ":visible .price-change:checked, #hulkapps_option_list_" + product_id + ":visible .price-change:selected, .hulkapps_swatch_option .swatch_selected,.textarea_selected,.textbox_selected");
+          for (i = 0; i < checked_variant.length; i++) {
+            if(!$(checked_variant[i]).parents(".hulkapps_option").hasClass('conditional')){
+              total = Number($(checked_variant[i]).attr("data-price")) + Number(total);
+            }
+          }
+          $("#hulkapps_options_" + product_id + " #raw_option_total").val(total);
+          $("#hulkapps_options_" + product_id + " #calculated_option_total").html(total.toFixed(2));
+          if (total > 0 && 1) {
+            $('#hulkapps_options_' + product_id + ' #option_total').slideDown();
+          } else {
+            $('#hulkapps_options_' + product_id + ' #option_total').slideUp();
+          }
+        }  
+        
+        function validate_options(product_id) {
+          var good = true;
+          $(".hulkapps_option:visible").each(function() {
+              $(this).removeClass("validation_error");
+          });
+          $('#hulkapps_options_' + product_id + ' #error_text').html('');
+          var hulkapps_req = $("#hulkapps_option_list_" + product_id + ":visible .required:visible");
+          var i;
+          for (i = 0; i < hulkapps_req.length; i++) {
+              if ($(hulkapps_req[i]).find("select[name^='properties']").length == 1 && !$(hulkapps_req[i]).find("select[name^='properties']").val()) {
+                  $(hulkapps_req[i]).addClass("validation_error");
+                  good = false;
+              } else if ($(hulkapps_req[i]).find(".hulkapps_radio_option").length && !$(hulkapps_req[i]).find("input[name^='properties']:checked").length) {
+                  $(hulkapps_req[i]).addClass("validation_error");
+                  good = false;option_display_total_format
+              }
+              else if ($(hulkapps_req[i]).find(".hulkapps_swatch_option").length && !$(hulkapps_req[i]).find("input[name^='properties']:checked").length) {
+                  $(hulkapps_req[i]).addClass("validation_error");
+                  good = false;
+              } else if ($(hulkapps_req[i]).find("input[type='text']").length > 1) {
+                $(hulkapps_req[i]).find("input[type='text']").each(function(){
+                  if($(this).val() == ''){
+                    $(hulkapps_req[i]).addClass("validation_error");  
+                    good = false;
+                  }
+                });
+              } else if ($(hulkapps_req[i]).find("input[type='text']").length && !$(hulkapps_req[i]).find("input[name^='properties']").val()) {
+                  $(hulkapps_req[i]).addClass("validation_error");
+                  good = false;
+              } else if ($(hulkapps_req[i]).find(".hulkapps_check_option").length && !$(hulkapps_req[i]).find("input[name^='properties']").val()) {
+                  $(hulkapps_req[i]).addClass("validation_error");
+                  good = false;
+              } else if ($(hulkapps_req[i]).find("input[type='file']").length && !$(hulkapps_req[i]).find("input[name^='properties']").val()) {
+                  $(hulkapps_req[i]).addClass("validation_error");
+                  good = false;
+              } else if ($(hulkapps_req[i]).hasClass("cb_render") && $(hulkapps_req[i]).find("input[type='checkbox']:checked").length && !$(hulkapps_req[i]).find("input[name^='properties']").length) {
+                  $(hulkapps_req[i]).addClass("validation_error");
+                  good = false;
+              } else if ($(hulkapps_req[i]).find("textarea").length && !$(hulkapps_req[i]).find("input[name^='properties']").val()) {
+                  $(hulkapps_req[i]).addClass("validation_error");
+                  good = false;
+              } else if ($(hulkapps_req[i]).find("select[multiple]").length && !$(hulkapps_req[i]).find("input[name^='properties']").val()) {
+                $(hulkapps_req[i]).addClass("validation_error");
+                  good = false;
+              } else {
+                  $(hulkapps_req[i]).removeClass("validation_error");
+              }
+          }
+          error_output = "";
+          
+          if (good && typeof additional_product_option_validation != "undefined") {
+              good = additional_product_option_validation();
+          }
+          if (typeof notify_validation != "undefined") {
+              notify_validation(good);
+          }
+          if (!good) {
+              $('#hulkapps_options_' + product_id + ' #error_text').html(error_output);
+              $('#hulkapps_options_' + product_id + ' #error_text').slideDown();
+          }
+          return good;
+        }
+        function validate_single_option(option_type_id,option_type) {
+
+            if(option_type == 'dd_render'){
+                if ($('.'+option_type_id).find("select[name^='properties']").length == 1 && !$('.'+option_type_id).find("select[name^='properties']").val() && $('.'+option_type_id).hasClass('required')) {
+                    $('.'+option_type_id).addClass("validation_error");
+                }else{
+                    $('.'+option_type_id).removeClass("validation_error");
+                }
+            }
+
+            else if(option_type == 'dd_multi_render'){
+                if ($('.'+option_type_id).find("select[multiple]").length && !$('.'+option_type_id).find("input[name^='properties']").val() && $('.'+option_type_id).hasClass('required')) {
+                    $('.'+option_type_id).addClass("validation_error");
+                } else {
+                    $('.'+option_type_id).removeClass("validation_error");
+                }
+            }
+
+            else if(option_type == 'swatch_render'){
+                if ($('.'+option_type_id).find(".hulkapps_swatch_option").length && !$('.'+option_type_id).find("input[name^='properties']:checked").length && $('.'+option_type_id).hasClass('required')) {
+                    $('.'+option_type_id).addClass("validation_error");
+                }else {
+                    $('.'+option_type_id).removeClass("validation_error");
+                }                                      
+
+            }
+
+            else if(option_type == 'cb_render'){
+                if ($('.'+option_type_id).find(".hulkapps_check_option").length && !$('.'+option_type_id).find("input[name^='properties']").val() && $('.'+option_type_id).hasClass('required')) {
+                    $('.'+option_type_id).addClass("validation_error");
+                }else {
+                    $('.'+option_type_id).removeClass("validation_error");
+                }
+            }
+
+            else if(option_type == 'tb_render'){
+                if ($('.'+option_type_id).find("input[type='text']").length && !$('.'+option_type_id).find("input[name^='properties']").val() && $('.'+option_type_id).hasClass('required')) {
+                    $('.'+option_type_id).addClass("validation_error");
+                }else {
+                    $('.'+option_type_id).removeClass("validation_error");
+                }
+            }
+
+            else if(option_type == 'ta_render'){
+                if ($('.'+option_type_id).find("textarea").length && !$('.'+option_type_id).find("input[name^='properties']").val() && $('.'+option_type_id).hasClass('required')) {
+                    $('.'+option_type_id).addClass("validation_error");
+                }else {
+                    $('.'+option_type_id).removeClass("validation_error");
+                }
+            }
+
+            else if(option_type == 'rb_render'){
+                if ($('.'+option_type_id).find(".hulkapps_radio_option").length && !$('.'+option_type_id).find("input[name^='properties']:checked").length && $('.'+option_type_id).hasClass('required')) {
+                    $('.'+option_type_id).addClass("validation_error");
+                }else {
+                    $('.'+option_type_id).removeClass("validation_error");
+                }
+            }
+
+            else if(option_type == 'fu_render'){
+                if ($('.'+option_type_id).find("input[type='file']").length && !$('.'+option_type_id).find("input[name^='properties']").val() && $('.'+option_type_id).hasClass('required')) {
+                    $('.'+option_type_id).addClass("validation_error");
+                }else {
+                    $('.'+option_type_id).removeClass("validation_error");
+                }
+            }
+
+        }
+        var hulk_flag = 0;
+        $("body").on('click', '.hulkapps_submit_cart', function(e) {  
+          if(hulk_flag == 0){
+              e.preventDefault();
+              var res = true;
+              if (validate_options(pid)) {
+                  hulk_flag = 1;
+                  $('.hulkapps_submit_cart').click();
+              }
+          };
+        });
+      
+      </script>
+      
+    
